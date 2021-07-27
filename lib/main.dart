@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/dashboard.dart';
+import 'package:flutter_application_1/routes.dart';
+import 'package:flutter_application_1/welcome.dart';
 
 void main() {
-  runApp(myapp());
+  runApp(MaterialApp(
+    title: 'Navigation Basics',
+    home: firstPage(),
+  ));
 }
 
-class myapp extends StatelessWidget {
-  // const myapp({Key? key}) : super(key: key);
-
+class firstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter app title'),
-          backgroundColor: Colors.amber,
-          centerTitle: true,
-        ),
-        body: Center(
-            child: Image.asset(
-          "images/book.jpeg",
-          height: double.infinity,
-          fit: BoxFit.fill,
-        )),
-      ),
+      home: welcome(),
+      initialRoute: '/',
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }
