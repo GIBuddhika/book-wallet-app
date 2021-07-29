@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/user_data.dart';
 import 'package:http/http.dart' as http;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Dashboard extends StatelessWidget {
   final String data;
@@ -28,31 +29,39 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   int currentPage = 1;
   List<User> users = [];
+  late int totalPages;
+  final RefreshController refreshController =
+      RefreshController(initialRefresh: true);
 
-  Future<bool> getUserData() async {
+  Future<bool> getUserData({bool isRefresh = false}) async {
+    if (isRefresh) {
+      currentPage = 1;
+    } else {
+      if (currentPage > totalPages) {
+        refreshController.loadNoData();
+        return true;
+      }
+    }
+
     final Uri uri = Uri.parse(
-        'https://reqres.in/api/products?per_page=10&page=$currentPage');
+        'https://reqres.in/api/products?per_page=5&page=$currentPage');
 
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final result = userDataFromJson(response.body);
-      users = result.data;
+      totalPages = result.totalPages;
+      if (isRefresh) {
+        users = result.data;
+      } else {
+        users.addAll(result.data);
+      }
       currentPage++;
       setState(() {});
-
-      print(users.length);
       return true;
     } else {
       return false;
     }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getUserData();
   }
 
   @override
@@ -62,17 +71,42 @@ class _DashboardViewState extends State<DashboardView> {
       appBar: AppBar(
         title: Text('Dashboard1'),
       ),
-      body: ListView.separated(
-          itemBuilder: (context, index) {
-            final user = users[index];
-
-            return ListTile(
-              title: Text(user.name),
-              tileColor: _getColorFromHex(user.color),
-            );
+      body: Scrollbar(
+        child: SmartRefresher(
+          controller: refreshController,
+          header: WaterDropMaterialHeader(
+            backgroundColor: Colors.orangeAccent.shade100,
+          ),
+          enablePullUp: true,
+          onRefresh: () async {
+            final result = await getUserData(isRefresh: true);
+            if (result) {
+              refreshController.refreshCompleted();
+            } else {
+              refreshController.refreshFailed();
+            }
           },
-          separatorBuilder: (context, index) => Divider(),
-          itemCount: users.length),
+          onLoading: () async {
+            final result = await getUserData();
+            if (result) {
+              refreshController.loadComplete();
+            } else {
+              refreshController.loadFailed();
+            }
+          },
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                final user = users[index];
+
+                return ListTile(
+                  title: Text(user.name),
+                  tileColor: _getColorFromHex(user.color),
+                );
+              },
+              separatorBuilder: (context, index) => Divider(),
+              itemCount: users.length),
+        ),
+      ),
     );
   }
 
