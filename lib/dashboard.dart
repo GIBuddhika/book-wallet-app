@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/main.dart';
-import 'package:flutter_application_1/sign-in.dart';
+import 'package:flutter_application_1/model/user_data.dart';
+import 'package:http/http.dart' as http;
 
 class Dashboard extends StatelessWidget {
   final String data;
@@ -12,64 +12,79 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.greenAccent.shade400,
-      appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Colors.yellowAccent.shade700,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(this.data),
-            OutlinedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignIn()),
-                );
-              },
-              child: Text("User 1"),
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                side: BorderSide(
-                  color: Colors.white,
-                  width: 2.0,
-                  style: BorderStyle.solid,
-                ),
-                primary: Colors.white,
-                minimumSize: Size(
-                  200.0,
-                  40,
-                ),
-              ),
-            ),
-            OutlinedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignIn()),
-                );
-              },
-              child: Text("User 2"),
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                side: BorderSide(
-                  color: Colors.white,
-                  width: 2.0,
-                  style: BorderStyle.solid,
-                ),
-                primary: Colors.white,
-                minimumSize: Size(
-                  200.0,
-                  40,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return MaterialApp(
+      home: DashboardView(),
     );
+  }
+}
+
+class DashboardView extends StatefulWidget {
+  const DashboardView({Key? key}) : super(key: key);
+
+  @override
+  _DashboardViewState createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  int currentPage = 1;
+  List<User> users = [];
+
+  Future<bool> getUserData() async {
+    final Uri uri = Uri.parse(
+        'https://reqres.in/api/products?per_page=10&page=$currentPage');
+
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final result = userDataFromJson(response.body);
+      users = result.data;
+      currentPage++;
+      setState(() {});
+
+      print(users.length);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        title: Text('Dashboard1'),
+      ),
+      body: ListView.separated(
+          itemBuilder: (context, index) {
+            final user = users[index];
+
+            return ListTile(
+              title: Text(user.name),
+              tileColor: _getColorFromHex(user.color),
+            );
+          },
+          separatorBuilder: (context, index) => Divider(),
+          itemCount: users.length),
+    );
+  }
+
+  //convert hex to integer
+  Color _getColorFromHex(String hexColor) {
+    hexColor = hexColor.replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    if (hexColor.length == 8) {
+      return Color(int.parse("0x$hexColor"));
+    }
+    return Color(int.parse("0xffffffff"));
   }
 }
