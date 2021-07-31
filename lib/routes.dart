@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/curved-navigation.dart';
 import 'package:flutter_application_1/dashboard.dart';
 
 class Routes {
@@ -14,6 +15,11 @@ class Routes {
         } else {
           return _errorRoute();
         }
+        break;
+      case '/curved-navigation':
+        return MaterialPageRoute(
+          builder: (_) => CurvedNavigation(data: 'data'),
+        );
         break;
       default:
         return _errorRoute();

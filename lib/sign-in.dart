@@ -13,7 +13,7 @@ class SignIn extends StatelessWidget {
         child: OutlinedButton(
           onPressed: () {
             Navigator.of(context).pushNamed(
-              '/dashboard',
+              '/curved-navigation',
               arguments: 'This is text from sign in page',
             );
           },

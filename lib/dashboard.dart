@@ -69,7 +69,7 @@ class _DashboardViewState extends State<DashboardView> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: Text('Dashboard1'),
+        title: Text('Dashboard'),
       ),
       body: Scrollbar(
         child: SmartRefresher(

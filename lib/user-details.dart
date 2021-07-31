@@ -6,11 +6,11 @@ class UserDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.greenAccent.shade400,
-      appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Colors.yellowAccent.shade700,
-      ),
+      backgroundColor: Colors.grey.shade100,
+      // appBar: AppBar(
+      //   title: Text("Dashboard"),
+      //   backgroundColor: Colors.yellowAccent.shade700,
+      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -26,11 +26,11 @@ class UserDetails extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 side: BorderSide(
-                  color: Colors.white,
+                  color: Colors.orangeAccent,
                   width: 2.0,
                   style: BorderStyle.solid,
                 ),
-                primary: Colors.white,
+                primary: Colors.orangeAccent,
                 minimumSize: Size(
                   200.0,
                   40,
@@ -48,11 +48,11 @@ class UserDetails extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 side: BorderSide(
-                  color: Colors.white,
+                  color: Colors.orangeAccent,
                   width: 2.0,
                   style: BorderStyle.solid,
                 ),
-                primary: Colors.white,
+                primary: Colors.orangeAccent,
                 minimumSize: Size(
                   200.0,
                   40,
