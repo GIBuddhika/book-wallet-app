@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/dashboard.dart';
 import 'package:flutter_application_1/model/user_data.dart';
 import 'package:flutter_application_1/user-details.dart';
-import 'package:flutter_application_1/welcome.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CurvedNavigation extends StatelessWidget {
@@ -35,7 +34,6 @@ class _CurvedNavigationViewState extends State<CurvedNavigationView> {
   final _pageOption = [
     UserDetails(),
     Dashboard(data: 'THIS IS TEST'),
-    welcome(),
   ];
 
   int currentPage = 1;
@@ -57,7 +55,11 @@ class _CurvedNavigationViewState extends State<CurvedNavigationView> {
         ],
         onTap: (int index) {
           setState(() {
-            _page = index;
+            if (index == 2) {
+              _showModal(context);
+            } else {
+              _page = index;
+            }
           });
         },
         animationCurve: Curves.fastLinearToSlowEaseIn,
@@ -68,4 +70,40 @@ class _CurvedNavigationViewState extends State<CurvedNavigationView> {
       body: _pageOption[_page],
     );
   }
+
+  Future _showModal(context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => buildSheet(),
+    );
+  }
+
+  Widget makeDismissable({required Widget child}) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => Navigator.of(context).pop(),
+        child: GestureDetector(onTap: () {}, child: child),
+      );
+
+  Widget buildSheet() => makeDismissable(
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          builder: (_, controller) => Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            padding: EdgeInsets.all(20),
+            child: ListView(
+              controller: controller,
+              children: [
+                Text('test'),
+                Text('test1'),
+                Text('test2'),
+              ],
+            ),
+          ),
+        ),
+      );
 }
