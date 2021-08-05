@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/dashboard.dart';
+import 'package:flutter_application_1/local_auth.dart';
 import 'package:flutter_application_1/sign-in.dart';
 
 class welcome extends StatelessWidget {
@@ -87,8 +89,19 @@ class welcome extends StatelessWidget {
                         width: 10,
                       ),
                       TextButton(
-                        onPressed: () {},
-                        child: Text("Register"),
+                        onPressed: () async {
+                          final isAuthenticated =
+                              await LocalAuth.authenticate();
+                          print(
+                              'isAuthenticated ' + isAuthenticated.toString());
+                          if (isAuthenticated) {
+                            Navigator.of(context).pushNamed(
+                              '/curved-navigation',
+                              arguments: 'This is text from sign in page',
+                            );
+                          }
+                        },
+                        child: Text("Login"),
                         style: TextButton.styleFrom(
                           primary: Colors.orangeAccent,
                           backgroundColor: Colors.white,
