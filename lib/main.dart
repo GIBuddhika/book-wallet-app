@@ -1,8 +1,12 @@
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/curved-navigation.dart';
 import 'package:flutter_application_1/routes.dart';
+import 'package:flutter_application_1/sign-in.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 AndroidNotificationChannel channel = const AndroidNotificationChannel(
   'high_importance_channel', // id
@@ -44,9 +48,27 @@ Future<void> main() async {
     sound: true,
   );
 
-  runApp(MaterialApp(
-    title: 'Navigation Basics',
-    home: FirstPage(),
+  runApp(
+    MaterialApp(
+      title: 'Navigation Basics',
+      home: FirstPage(),
+      theme: ThemeData(
+        // primaryColor: Colors.lightGreen,
+        // accentColor: Colors.orange[600],
+        // indicatorColor: Colors.yellow,
+        // focusColor: Colors.yellow,
+        textSelectionTheme: TextSelectionThemeData(
+          selectionHandleColor: Colors.yellow,
+        ),
+      ),
+
+      // home: CurvedNavigation(data: 'data'),
+    ),
+  );
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarDividerColor: Colors.transparent,
   ));
 }
 
@@ -72,6 +94,7 @@ class FirstPageScreenState extends State<FirstPageScreen> {
   @override
   void initState() {
     super.initState();
+    checkAuth();
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       showDialog(
           context: context,
@@ -109,6 +132,27 @@ class FirstPageScreenState extends State<FirstPageScreen> {
             );
           });
     });
+  }
+
+  final storage = FlutterSecureStorage();
+
+  Future<bool> checkAuth() async {
+    // await storage.write(key: 'token', value: 'token1');
+    String? token = await storage.read(key: 'token');
+    // await storage.deleteAll();
+    print(token);
+    if (token != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CurvedNavigation(data: 'data')),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SignIn()),
+      );
+    }
+    return true;
   }
 
   @override
